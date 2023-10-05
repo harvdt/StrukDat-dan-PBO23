@@ -11,16 +11,20 @@ struct Mahasiswa {
 };
 
 void displayData(Mahasiswa mhs[], int size) {
-    for (int i = 0; i < size; i++) {
+    if(size == 0) {
+        cout << "Data Kosong" << endl;
+    } else {
+        for (int i = 0; i < size; i++) {
         cout << endl << "Nama: " << mhs[i].nama << endl;
         cout << "NIM: " << mhs[i].NIM << endl;
         cout << "Umur: " << mhs[i].umur << endl;
         cout << "IPK: " << mhs[i].IPK << endl;
+        }
     }
 }
 
 void addData(Mahasiswa mhs[], int &size) {
-    if(size < 0 || size > 10) {
+    if(size > 9) {
         cout << "Array sudah penuh" << endl;
     } else {
         cout << "Nama : ";
@@ -93,8 +97,7 @@ int main(int argc, char const *argv[]) {
         
         cin >> choice;
 
-        switch (choice)
-        {
+        switch (choice) {
         case 1:
             displayData(mhs, size);
             break;
