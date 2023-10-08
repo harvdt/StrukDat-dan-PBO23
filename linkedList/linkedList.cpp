@@ -5,87 +5,228 @@ using namespace std;
 
 struct Movie {
     string title;
-    string director;
     int releaseYear;
     float rating;
-
     Movie *next;
 };
 
-Movie *head, *cur, *tail, *newNode;
+Movie *head, *current, *tail, *newNode, *temp;
 
-void createSingleLinkedList(string title, string director, int releaseYear, float rating){
-    head = new Movie();
-    head->title = title;
-    head->director = director;
-    head->releaseYear = releaseYear;
-    head->rating = rating;
-    head->next = NULL;
-    tail = head;
+void addMovie() {
+    Movie *newMovie = new Movie;
+    cout << "Masukkan judul film: ";
+    cin.ignore();
+    getline(cin, newMovie->title);
+    cout << "Masukkan tahun rilis: ";
+    cin >> newMovie->releaseYear;
+    cout << "Masukkan rating: ";
+    cin >> newMovie->rating;
+    newMovie->next = NULL;
+
+    int position;
+    cout << "Masukkan posisi film (1: Awal, 2: Akhir, 3: Tengah): ";
+    cin >> position;
+
+    if (position == 1) {
+        newMovie->next = head;
+        head = newMovie;
+        cout << "Film berhasil ditambahkan di awal daftar" << endl;
+    } else if (position == 2) {
+        if (head == NULL) {
+            head = tail = newMovie;
+        } else {
+            tail->next = newMovie;
+            tail = newMovie;
+        }
+        cout << "Film berhasil ditambahkan di akhir daftar" << endl;
+    } else if (position == 3) {
+        if (head == NULL) {
+            head = tail = newMovie;
+        } else {
+            int pos;
+            cout << "Masukkan posisi tengah film (setelah film ke-berapa): ";
+            cin >> pos;
+            Movie *current = head;
+            int currentPos = 1;
+            while (current != NULL && currentPos < pos) {
+                current = current->next;
+                currentPos++;
+            }
+            if (current == NULL) {
+                cout << "Posisi tengah tidak valid" << endl;
+                delete newMovie;
+                return;
+            }
+            newMovie->next = current->next;
+            current->next = newMovie;
+        }
+        cout << "Film berhasil ditambahkan di tengah daftar" << endl;
+    } else {
+        cout << "Pilihan tidak valid" << endl;
+        delete newMovie;
+        return;
+    }
 }
 
-void addBeginning(string title, string director, int releaseYear, float rating) {
-    newNode = new Movie();
-    newNode->title = title;
-    newNode->director = director;
-    newNode->releaseYear = releaseYear;
-    newNode->rating = rating;
-    newNode->next = head;
-    head = newNode;
+void deleteMovie() {
+    if (head == NULL) {
+        cout << "Daftar film kosong" << endl;
+        return;
+    }
+
+    int position;
+    cout << "Masukkan posisi film yang ingin dihapus (1: Awal, 2: Akhir, 3: Tengah): ";
+    cin >> position;
+
+    if (position == 1) {
+        Movie *temp = head;
+        head = head->next;
+        delete temp;
+        cout << "Film di awal daftar berhasil dihapus" << endl;
+    } else if (position == 2) {
+        if (head == tail) {
+            delete head;
+            head = tail = NULL;
+        } else {
+            Movie *current = head;
+            while (current->next != tail) {
+                current = current->next;
+            }
+            delete tail;
+            tail = current;
+            tail->next = NULL;
+        }
+        cout << "Film di akhir daftar berhasil dihapus" << endl;
+    } else if (position == 3) {
+        int pos;
+        cout << "Masukkan posisi tengah film (setelah film ke-berapa): ";
+        cin >> pos;
+        Movie *current = head;
+        int currentPos = 1;
+        while (current != NULL && currentPos < pos) {
+            current = current->next;
+            currentPos++;
+        }
+        if (current == NULL || current->next == NULL) {
+            cout << "Posisi tengah tidak valid" << endl;
+            return;
+        }
+        Movie *temp = current->next;
+        current->next = current->next->next;
+        delete temp;
+        cout << "Film di tengah daftar berhasil dihapus" << endl;
+    } else {
+        cout << "Pilihan tidak valid" << endl;
+        return;
+    }
 }
 
-// void addMiddle(string title, string director, int releaseYear, float rating) {
-//     newNode = new Movie();
-//     newNode->title = title;
-//     newNode->director = director;
-//     newNode->releaseYear = releaseYear;
-//     newNode->rating = rating;
-//     head->next = newNode;
-// }
+void editMovie() {
+    if (head == NULL) {
+        cout << "Daftar film kosong" << endl;
+        return;
+    }
 
-void addLast(string title, string director, int releaseYear, float rating) {
-    newNode = new Movie();
-    newNode->title = title;
-    newNode->director = director;
-    newNode->releaseYear = releaseYear;
-    newNode->rating = rating;
-    newNode->next = NULL;
-    tail->next = newNode;
-    tail = newNode;
+    string title;
+    int releaseYear;
+    float rating;
+
+    cout << "Masukkan judul film: ";
+    cin.ignore();
+    getline(cin, title);
+    cout << "Masukkan tahun rilis: ";
+    cin >> releaseYear;
+    cout << "Masukkan rating: ";
+    cin >> rating;
+
+    int position;
+    cout << "Masukkan posisi film yang ingin diedit (1: Awal, 2: Akhir, 3: Tengah): ";
+    cin >> position;
+
+    if (position == 1) {
+        head->title = title;
+        head->releaseYear = releaseYear;
+        head->rating = rating;
+    } else if (position == 2) {
+        tail->title = title;
+        tail->releaseYear = releaseYear;
+        tail->rating = rating;
+    } else if (position == 3) {
+        int pos;
+        cout << "Masukkan posisi tengah film (setelah film ke-berapa): ";
+        cin >> pos;
+        Movie *current = head;
+        int currentPos = 1;
+        while (current != NULL && currentPos < pos) {
+            current = current->next;
+            currentPos++;
+        }
+        if (current == NULL || current->next == NULL) {
+            cout << "Posisi tengah tidak valid" << endl;
+            return;
+        }
+        current->next->title = title;
+        current->next->releaseYear = releaseYear;
+        current->next->rating = rating;
+    } else {
+        cout << "Pilihan tidak valid" << endl;
+        return;
+    }
 }
-void deleteBeginning() {
-    cur = head;
-    head = head->next;
-    delete cur;
-}
 
-void deleteLast() {
-    
-}
+void printMovie() {
+    if (head == NULL) {
+        cout << "Daftar film kosong" << endl;
+        return;
+    }
 
-void printList() {
-    cur = head;
-    while(cur != NULL) {
-        cout << cur->title << endl;
-        cout << cur->director << endl;
-        cout << cur->releaseYear << endl;
-        cout << cur->rating << endl << endl;
+    Movie *current = head;
+    while (current != NULL) {
+        cout << "Judul: " << current->title << endl;
+        cout << "Tahun Rilis: " << current->releaseYear << endl;
+        cout << "Rating: " << current->rating << endl << endl;
 
-        cur = cur->next;
+        current = current->next;
     }
 }
 
 int main(int argc, char const *argv[])
 {
-    createSingleLinkedList("A", "Udin", 1998, 5.5);
+    int choice;
 
-    addBeginning("B", "Joko", 2003, 7.4);
+    while (true) {
+        cout 
+        << "Pilih menu: \n"
+        << "1. Tambahkan data\n"
+        << "2. Hapus data\n"
+        << "3. Edit data\n"
+        << "4. Print seluruh data\n"
+        << "5. Keluar\n"
+        << "Menu: ";
+        cin >> choice;
 
-    addLast("C", "Budi", 2001, 7.8);
-
-    deleteBeginning();
-
-    printList();
+        switch (choice) {
+        case 1:
+            addMovie();
+            break;
+        case 2:
+            deleteMovie();
+            break;
+        case 3:
+            editMovie();
+            break;
+        case 4:
+            printMovie();
+            break;
+        case 5:
+            cout << "Keluar dari program";
+            return 0;
+            break;
+        default:
+            cout << "Input tidak valid"; 
+            break;
+        }
+    }
 
     return 0;
 }
